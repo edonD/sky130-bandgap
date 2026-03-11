@@ -4,19 +4,13 @@ Parameters: 6
 Specs: 5
 
 DE: 6 params, pop=30, patience=10, workers=32
-[DE] iter    1 | best: 6.600920e+02 | no_improve:   0 | div: 0.2896 | dt: 86.929s
-[DE] iter    2 | best: 6.600920e+02 | no_improve:   1 | div: 0.2709 | dt: 97.817s
-[DE] iter    3 | best: 3.519900e+02 | no_improve:   0 | div: 0.2551 | dt: 103.765s
-[DE] iter    4 | best: 3.519900e+02 | no_improve:   1 | div: 0.2419 | dt: 94.591s
-[DE] iter    5 | best: 3.519900e+02 | no_improve:   2 | div: 0.2350 | dt: 107.877s
-[DE] iter    6 | best: 3.519900e+02 | no_improve:   3 | div: 0.2227 | dt: 99.498s
-[DE] iter    7 | best: 3.517924e+02 | no_improve:   0 | div: 0.2102 | dt: 103.104s
-[DE] iter    8 | best: 3.517924e+02 | no_improve:   1 | div: 0.2041 | dt: 90.862s
-[DE] iter    9 | best: 3.511238e+02 | no_improve:   0 | div: 0.1930 | dt: 100.890s
-[DE] iter   10 | best: 3.511238e+02 | no_improve:   1 | div: 0.1825 | dt: 94.065s
-[DE] iter   11 | best: 3.511238e+02 | no_improve:   2 | div: 0.1788 | dt: 96.934s
-[DE] iter   12 | best: 3.510645e+02 | no_improve:   0 | div: 0.1889 | dt: 91.571s
-[DE] iter   13 | best: 3.510645e+02 | no_improve:   1 | div: 0.1818 | dt: 95.194s
-[DE] iter   14 | best: 3.510645e+02 | no_improve:   2 | div: 0.1521 | dt: 103.846s
-[DE] iter   15 | best: 3.510645e+02 | no_improve:   3 | div: 0.1503 | dt: 107.089s
-[DE] iter   16 | best: 3.510360e+02 | no_improve:   0 | div: 0.1482 | dt: 105.141s
+[DE] iter    1 | best: 3.517997e+02 | no_improve:   0 | div: 0.2890 | dt: 86.014s
+[DE] iter    2 | best: 3.517997e+02 | no_improve:   1 | div: 0.2586 | dt: 63.497s
+[DE] iter    3 | best: 3.517997e+02 | no_improve:   2 | div: 0.2490 | dt: 76.487s
+[DE] iter    4 | best: 3.517997e+02 | no_improve:   3 | div: 0.2318 | dt: 73.785s
+[DE] iter    5 | best: 3.517997e+02 | no_improve:   4 | div: 0.2200 | dt: 85.903s
+[DE] iter    6 | best: 3.517997e+02 | no_improve:   5 | div: 0.2119 | dt: 93.448s
+[DE] iter    7 | best: 3.517997e+02 | no_improve:   6 | div: 0.1974 | dt: 92.350s
+[DE] iter    8 | best: 3.517997e+02 | no_improve:   7 | div: 0.1901 | dt: 99.889s
+[DE] iter    9 | best: 3.517997e+02 | no_improve:   8 | div: 0.1868 | dt: 97.665s
+[DE] iter   10 | best: 3.517997e+02 | no_improve:   9 | div: 0.1775 | dt: 105.635s
