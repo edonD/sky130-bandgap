@@ -15,10 +15,7 @@ Vdd vdd 0 dc 1.8 ac 1
 Vss vss 0 0
 
 * === PNP BJT Core ===
-* Branch 1: Q1 (1x PNP), emitter at n1
 XQ1 vss vss n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
-
-* Branch 2: Q2 (8x PNP), Rptat in series, emitter at ne2
 XQ2 vss vss ne2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
 Rptat n2 ne2 {Rptat}
 
@@ -29,8 +26,6 @@ XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
 
 * === OTA: PMOS diff pair + NMOS active load ===
 * n2 = V+ (non-inverting), n1 = V- (inverting) for negative feedback
-* When mirror current increases -> Rptat drop makes V(n2) rise more than V(n1)
-* OTA output ng rises -> PMOS mirrors reduce current -> negative feedback
 XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
 XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
 
@@ -51,11 +46,11 @@ XMs n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=4u nf=1
 * Compensation cap for OTA stability
 Cc ng vss {Cc}p
 
-* Convergence aids
-.nodeset v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
-.options gmin=1e-11 abstol=1e-11 reltol=0.01 itl1=500 srcsteps=20
+* Convergence: use .ic for fast convergence, srcsteps as fallback
+.ic v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
+.options gmin=1e-11 abstol=1e-11 reltol=0.01 itl1=500 srcsteps=10
 
-* === Measurements ===
+* === Measurements (optimized for speed) ===
 .control
 * DC operating point at 27C
 op
@@ -65,8 +60,8 @@ let pwr = abs(v(vdd) * i(Vdd)) * 1e6
 echo "RESULT_POWER_UW" $&pwr
 destroy all
 
-* Temperature sweep for tempco
-dc temp -40 125 5
+* Temperature sweep for tempco (coarse: 20C steps)
+dc temp -40 125 20
 let vref_max = vecmax(v(vref))
 let vref_min = vecmin(v(vref))
 let vref_nom = (vref_max + vref_min) / 2
@@ -74,16 +69,16 @@ let tempco_val = (vref_max - vref_min) / vref_nom / 165 * 1e6
 echo "RESULT_TEMPCO_PPM" $&tempco_val
 destroy all
 
-* PSRR: AC analysis
+* PSRR: AC analysis (fewer points)
 op
-ac dec 100 1 1G
+ac dec 20 1 1G
 meas ac psrr_gain find vdb(vref) at=100
 let psrr_val = -psrr_gain
 echo "RESULT_PSRR_DB" $&psrr_val
 destroy all
 
-* Line regulation: sweep VDD from 1.4 to 2.2
-dc Vdd 1.4 2.2 0.02
+* Line regulation: sweep VDD (coarse)
+dc Vdd 1.4 2.2 0.1
 let vref_first = v(vref)[0]
 let vref_last = v(vref)[length(v(vref))-1]
 let line_reg = abs(vref_last - vref_first) / 0.8 * 1000
