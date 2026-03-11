@@ -41,15 +41,15 @@ XMl2 ng na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
 XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
 Rout vref nq3 {Rout}
 
-* === Startup: PMOS injects current when vref is low ===
-XMs n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=4u nf=1
+* === Startup: weak resistor pulls ng low to start PMOS mirror ===
+Rstart ng vss 50000000
 
 * Compensation cap for OTA stability
 Cc ng vss {Cc}p
 
 * Convergence aids
 .nodeset v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
-.options gmin=1e-12 abstol=1e-12 reltol=0.003 itl1=300
+.options gmin=1e-11 abstol=1e-11 reltol=0.01 itl1=500 srcsteps=50
 
 * === Measurements ===
 .control
