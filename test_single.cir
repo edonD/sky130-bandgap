@@ -1,74 +1,61 @@
-* SKY130 Bandgap Voltage Reference
-* OTA-based with PMOS diff pair, correct feedback polarity
-* OTA forces V(n1) ≈ V(n2), creating IPTAT = VT*ln(8)/Rptat
-* Vref = VBE_Q3 + IPTAT * Rptat * Rratio
-
+* SKY130 Bandgap — Full test with correct polarity
 .lib "sky130_models/sky130.lib.spice" tt
 
-* Supply
 Vdd vdd 0 dc 1.8 ac 1
 Vss vss 0 0
 
-* Compute Rout from ratio
-.param Rout_val = {Rptat} * {Rratio}
-
-* === PNP BJT Core ===
+* PNP BJTs
 XQ1 vss vss n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
 XQ2 vss vss ne2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
-Rptat n2 ne2 {Rptat}
+Rptat n2 ne2 30000
 
-* === PMOS Current Mirror (driven by OTA output ng) ===
-XMp1 n1 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
-XMp2 n2 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
-XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+* PMOS Current Mirror
+XMp1 n1 ng vdd vdd sky130_fd_pr__pfet_01v8 W=20u L=4u nf=1
+XMp2 n2 ng vdd vdd sky130_fd_pr__pfet_01v8 W=20u L=4u nf=1
+XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W=20u L=4u nf=1
 
-* === OTA: PMOS diff pair + NMOS active load ===
-* Md1 gate=n2 (non-inverting), Md2 gate=n1 (inverting)
-* When I too high: n2 rises -> ng rises -> PMOS off -> neg feedback
+* OTA: PMOS diff pair — CORRECT polarity
 XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W=10u L=2u nf=1
 XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W=10u L=2u nf=1
+Rtail vdd nsc 200000
 
-* Tail current source: resistor from VDD
-Rtail vdd nsc {Rtail}
-
-* NMOS active load (current mirror)
+* NMOS active load
 XMl1 na na vss vss sky130_fd_pr__nfet_01v8 W=5u L=2u nf=1
 XMl2 ng na vss vss sky130_fd_pr__nfet_01v8 W=5u L=2u nf=1
 
-* === Output: VBE (CTAT) + IPTAT * Rout (PTAT) ===
+* Output: target Vref ~1.2V means Rout ~200k with these currents
 XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
-Rout vref nq3 Rout_val
+Rout vref nq3 200000
 
-* === Startup: weak resistor pulls ng low to start mirror ===
+* Startup
 Rstart ng vss 50000000
 
-* Compensation cap for OTA stability
+* Compensation
 Cc ng vss 3p
 
-* Convergence: source stepping essential for OTA
 .nodeset v(n1)=0.7 v(n2)=0.7 v(vref)=1.2 v(ng)=0.9
 .options gmin=1e-11 abstol=1e-11 reltol=0.01 itl1=500 srcsteps=50
 
-* === Measurements ===
 .control
-* DC operating point at 27C
+set temp=27
 op
-let vref_val = v(vref)
-echo "RESULT_VREF_V" $&vref_val
+print v(vref) v(n1) v(n2) v(ng)
 let pwr = abs(v(vdd) * i(Vdd)) * 1e6
+echo "RESULT_VREF_V" $&v(vref)
 echo "RESULT_POWER_UW" $&pwr
 destroy all
 
-* Temperature sweep for tempco
+* Temperature sweep
 dc temp -40 125 5
 let vref_max = vecmax(v(vref))
 let vref_min = vecmin(v(vref))
 let vref_nom = (vref_max + vref_min) / 2
 let tempco_val = (vref_max - vref_min) / vref_nom / 165 * 1e6
 echo "RESULT_TEMPCO_PPM" $&tempco_val
+print vref_max vref_min
 destroy all
 
-* PSRR: AC analysis
+* PSRR
 op
 ac dec 100 1 1G
 meas ac psrr_gain find vdb(vref) at=100
@@ -76,7 +63,7 @@ let psrr_val = -psrr_gain
 echo "RESULT_PSRR_DB" $&psrr_val
 destroy all
 
-* Line regulation: sweep VDD from 1.4 to 2.2
+* Line regulation
 dc Vdd 1.4 2.2 0.02
 let vref_first = v(vref)[0]
 let vref_last = v(vref)[length(v(vref))-1]
@@ -85,5 +72,4 @@ echo "RESULT_LINE_REG_MV_V" $&line_reg
 
 echo "RESULT_DONE"
 .endc
-
 .end
