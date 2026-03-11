@@ -10,11 +10,11 @@ Vss vss 0 0
 
 * === Core: Two PNP branches with different emitter counts ===
 
-* Branch 1: single PNP (1x)
-XQ1 vss n1 n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+* Branch 1: single PNP (1x), diode-connected (base=collector=vss)
+XQ1 vss vss n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
 
-* Branch 2: 8 parallel PNPs (8x) — emitter area ratio sets PTAT slope
-XQ2 vss n2 n2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
+* Branch 2: 8 parallel PNPs (8x), diode-connected (base=collector=vss)
+XQ2 vss vss n2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
 
 * PTAT resistor between emitters
 Rptat n1 n2 {Rptat}
