@@ -1,9 +1,7 @@
 Loading design...
 Design: SKY130 Bandgap Voltage Reference
-Parameters: 6
+Parameters: 10
 Specs: 5
 
-DE: 6 params, pop=100, patience=50, workers=32
-[DE] iter    1 | best: 2.009891e+04 | no_improve:   0 | div: 0.2887 | dt: 300.393s
-[DE] iter    2 | best: 1.326683e+04 | no_improve:   0 | div: 0.2764 | dt: 316.674s
-[DE] iter    3 | best: 1.208395e+04 | no_improve:   0 | div: 0.2644 | dt: 342.969s
+DE: 10 params, pop=100, patience=50, workers=32
+[DE] iter    1 | best: 8.574273e+04 | no_improve:   0 | div: 0.2886 | dt: 361.746s
