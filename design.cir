@@ -5,7 +5,7 @@
 .lib "sky130_models/sky130.lib.spice" tt
 
 * Supply
-Vdd vdd 0 1.8
+Vdd vdd 0 dc 1.8 ac 1
 Vss vss 0 0
 
 * === Core: Two PNP branches with different emitter counts ===
@@ -45,36 +45,33 @@ XMs2 nstart vref vss vss sky130_fd_pr__nfet_01v8 W=1u L=1u nf=1
 op
 let vref_val = v(vref)
 echo "RESULT_VREF_V" $&vref_val
-
-* Power
 let pwr = abs(v(vdd) * i(Vdd)) * 1e6
 echo "RESULT_POWER_UW" $&pwr
+destroy all
 
 * Temperature sweep for tempco
 dc temp -40 125 1
-wrdata temp_sweep v(vref)
-
-* Find min and max Vref over temperature
-meas dc vref_max max v(vref)
-meas dc vref_min min v(vref)
+let vref_max = vecmax(v(vref))
+let vref_min = vecmin(v(vref))
 let vref_nom = (vref_max + vref_min) / 2
 let tempco_val = (vref_max - vref_min) / vref_nom / 165 * 1e6
 echo "RESULT_TEMPCO_PPM" $&tempco_val
+destroy all
 
-* Line regulation: sweep VDD from 1.4 to 2.2
-dc Vdd 1.4 2.2 0.01
-wrdata line_sweep v(vref)
-meas dc vref_at_14 find v(vref) at=1.4
-meas dc vref_at_22 find v(vref) at=2.2
-let line_reg = abs(vref_at_22 - vref_at_14) / 0.8 * 1000
-echo "RESULT_LINE_REG_MV_V" $&line_reg
-
-* PSRR: AC analysis with stimulus on VDD
-alter @Vdd[mag] = 1
+* PSRR: AC analysis at nominal operating point (must be before DC sweeps)
+op
 ac dec 100 1 1G
 meas ac psrr_gain find vdb(vref) at=100
 let psrr_val = -psrr_gain
 echo "RESULT_PSRR_DB" $&psrr_val
+destroy all
+
+* Line regulation: sweep VDD from 1.4 to 2.2
+dc Vdd 1.4 2.2 0.01
+let vref_first = v(vref)[0]
+let vref_last = v(vref)[length(v(vref))-1]
+let line_reg = abs(vref_last - vref_first) / 0.8 * 1000
+echo "RESULT_LINE_REG_MV_V" $&line_reg
 
 echo "RESULT_DONE"
 .endc
