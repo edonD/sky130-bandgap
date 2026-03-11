@@ -1,6 +1,6 @@
 * SKY130 Bandgap Voltage Reference
-* OTA-based bandgap with PMOS diff pair forcing PTAT current
-* Vref = VBE_Q3 + (Rout/Rptat) * VT * ln(8)
+* Classic PTAT + CTAT using parasitic PNP BJTs with simple PMOS mirror
+* Vref = VBE_Q3 + (Rout/Rptat) * VT * ln(N)
 
 .lib "sky130_models/sky130.lib.spice" tt
 
@@ -8,46 +8,41 @@
 Vdd vdd 0 dc 1.8 ac 1
 Vss vss 0 0
 
-* === PNP BJT Core ===
-* Branch 1: Q1 (1x PNP), emitter at n1
+* === Core: Two PNP branches with different emitter counts ===
+
+* Branch 1: single PNP (1x), diode-connected (base=collector=vss)
 XQ1 vss vss n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
 
-* Branch 2: Q2 (8x PNP), Rptat in series, emitter at ne2
-XQ2 vss vss ne2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
-Rptat n2 ne2 {Rptat}
+* Branch 2: N parallel PNPs (8x), diode-connected (base=collector=vss)
+XQ2 vss vss n2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
 
-* === PMOS Current Mirror (driven by OTA output ng) ===
-XMp1 n1 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
-XMp2 n2 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
-XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+* PTAT resistor between emitters — deltaVBE = VT*ln(8) develops across this
+Rptat n1 n2 {Rptat}
 
-* === OTA: PMOS diff pair + NMOS active load ===
-* V+ = n2 (non-inverting, branch with Rptat — more sensitive to current)
-* V- = n1 (inverting, simple VBE branch)
-* Output ng drives the PMOS mirror gates
-XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
-XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
+* === Current mirror forces equal currents through both branches ===
+* Long channel for better matching and output impedance (PSRR)
+XMp1 n1 n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp2 n2 n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp3 vref n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
 
-* Tail current via resistor from VDD
-Rtail vdd nsc {Rtail}
-
-* NMOS active load (current mirror)
-XMl1 na na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
-XMl2 ng na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
-
-* === Output: VBE (CTAT) + IPTAT * Rout (PTAT) ===
+* === Output: VBE (CTAT) + I_ptat * Rout (PTAT) = bandgap voltage ===
+* Q3 diode-connected PNP provides CTAT VBE
 XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+
+* Rout converts PTAT current to voltage on top of VBE
 Rout vref nq3 {Rout}
 
-* === Startup: PMOS injects current into n1 when vref is low ===
-XMs_start n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=4u nf=1
+* === Startup circuit: ensures circuit exits zero-current state ===
+* At power-up, vref=0 → Ms2 OFF → nstart pulled to VDD via Rstart
+* → Ms1 ON → injects current into mirror → circuit starts
+* Once vref rises → Ms2 ON → nstart pulled low → Ms1 OFF → disengaged
+Rstart nstart vdd {Rstart}
+XMs1 n1 nstart vss vss sky130_fd_pr__nfet_01v8 W={Wstart}u L=1u nf=1
+XMs2 nstart vref vss vss sky130_fd_pr__nfet_01v8 W=1u L=1u nf=1
 
-* Compensation cap for OTA stability
-Cc ng vss 2p
-
-* Help simulator converge to desired operating point
-.nodeset v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
-.options method=gear gmin=1e-12 abstol=1e-12 reltol=0.003 itl1=300 itl4=50
+* Convergence aids
+.nodeset v(n1)=0.7 v(n2)=0.7 v(vref)=1.2
+.options gmin=1e-12 abstol=1e-12 reltol=0.003 itl1=300
 
 * === Measurements ===
 .control
@@ -57,10 +52,16 @@ let vref_val = v(vref)
 echo "RESULT_VREF_V" $&vref_val
 let pwr = abs(v(vdd) * i(Vdd)) * 1e6
 echo "RESULT_POWER_UW" $&pwr
+
+* PSRR: AC analysis at nominal operating point
+ac dec 100 1 1G
+meas ac psrr_gain find vdb(vref) at=100
+let psrr_val = -psrr_gain
+echo "RESULT_PSRR_DB" $&psrr_val
 destroy all
 
 * Temperature sweep for tempco
-dc temp -40 125 1
+dc temp -40 125 5
 let vref_max = vecmax(v(vref))
 let vref_min = vecmin(v(vref))
 let vref_nom = (vref_max + vref_min) / 2
@@ -68,16 +69,8 @@ let tempco_val = (vref_max - vref_min) / vref_nom / 165 * 1e6
 echo "RESULT_TEMPCO_PPM" $&tempco_val
 destroy all
 
-* PSRR: AC analysis
-op
-ac dec 100 1 1G
-meas ac psrr_gain find vdb(vref) at=100
-let psrr_val = -psrr_gain
-echo "RESULT_PSRR_DB" $&psrr_val
-destroy all
-
 * Line regulation: sweep VDD from 1.4 to 2.2
-dc Vdd 1.4 2.2 0.01
+dc Vdd 1.4 2.2 0.02
 let vref_first = v(vref)[0]
 let vref_last = v(vref)[length(v(vref))-1]
 let line_reg = abs(vref_last - vref_first) / 0.8 * 1000
