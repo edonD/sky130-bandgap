@@ -1,0 +1,74 @@
+* SKY130 Bandgap Voltage Reference — Starter Topology
+* Classic PTAT + CTAT using parasitic PNP BJTs
+
+.lib "sky130_models/sky130.lib.spice" tt
+
+* Supply
+Vdd vdd 0 1.8
+Vss vss 0 0
+
+* === Core: Two PNP branches with different emitter counts ===
+
+* Branch 1: single PNP (1x)
+XQ1 vss n1 n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+
+* Branch 2: N parallel PNPs (Nx) — emitter area ratio sets PTAT slope
+XQ2 vss n2 n2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
+
+* PTAT resistor between emitters
+Rptat n1 n2 {Rptat}
+
+* === Current mirror forces equal currents through both branches ===
+XMp1 n1 n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp2 n2 n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp3 vref n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+
+* === Output: sum PTAT and CTAT currents through Rout ===
+Rout vref vss {Rout}
+
+* === Startup circuit: ensure circuit exits zero-current state ===
+XMs1 nstart nstart vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=1u nf=1
+XMs2 nstart n1 vss vss sky130_fd_pr__nfet_01v8 W={Wstart}u L=1u nf=1
+Cstart nstart vss 1p
+
+* === Measurements ===
+.control
+* DC operating point at 27C
+op
+let vref_val = v(vref)
+echo "RESULT_VREF_V" $&vref_val
+
+* Power
+let pwr = abs(v(vdd) * i(Vdd)) * 1e6
+echo "RESULT_POWER_UW" $&pwr
+
+* Temperature sweep for tempco
+dc temp -40 125 1
+wrdata temp_sweep v(vref)
+
+* Find min and max Vref over temperature
+meas dc vref_max max v(vref)
+meas dc vref_min min v(vref)
+let vref_nom = (vref_max + vref_min) / 2
+let tempco_val = (vref_max - vref_min) / vref_nom / 165 * 1e6
+echo "RESULT_TEMPCO_PPM" $&tempco_val
+
+* Line regulation: sweep VDD from 1.4 to 2.2
+dc Vdd 1.4 2.2 0.01
+wrdata line_sweep v(vref)
+meas dc vref_at_14 find v(vref) at=1.4
+meas dc vref_at_22 find v(vref) at=2.2
+let line_reg = abs(vref_at_22 - vref_at_14) / 0.8 * 1000
+echo "RESULT_LINE_REG_MV_V" $&line_reg
+
+* PSRR: AC analysis with stimulus on VDD
+alter @Vdd[mag] = 1
+ac dec 100 1 1G
+meas ac psrr_gain find vdb(vref) at=100
+let psrr_val = -psrr_gain
+echo "RESULT_PSRR_DB" $&psrr_val
+
+echo "RESULT_DONE"
+.endc
+
+.end

@@ -1,0 +1,6 @@
+name,min,max,scale
+Wm,2,200,log
+Lm,0.5,10,log
+Rptat,500,100000,log
+Rout,5000,500000,log
+Wstart,0.5,20,log

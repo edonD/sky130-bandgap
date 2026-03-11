@@ -1,0 +1,37 @@
+{
+  "name": "SKY130 Bandgap Voltage Reference",
+  "supply_v": 1.8,
+  "supply_type": "single",
+  "measurements": {
+    "vref_v": {
+      "target": "1.15-1.25",
+      "weight": 25,
+      "unit": "V",
+      "description": "Output reference voltage at 27C"
+    },
+    "tempco_ppm": {
+      "target": "<50",
+      "weight": 25,
+      "unit": "ppm/C",
+      "description": "Temperature coefficient over -40C to 125C"
+    },
+    "psrr_db": {
+      "target": ">40",
+      "weight": 20,
+      "unit": "dB",
+      "description": "Power supply rejection ratio at DC"
+    },
+    "power_uw": {
+      "target": "<100",
+      "weight": 15,
+      "unit": "uW",
+      "description": "Total quiescent power dissipation"
+    },
+    "line_reg_mv_v": {
+      "target": "<10",
+      "weight": 15,
+      "unit": "mV/V",
+      "description": "Line regulation (dVref/dVdd)"
+    }
+  }
+}
