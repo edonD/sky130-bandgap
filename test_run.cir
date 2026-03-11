@@ -1,6 +1,5 @@
-* SKY130 Bandgap Voltage Reference
+* SKY130 Bandgap Voltage Reference — Starter Topology
 * Classic PTAT + CTAT using parasitic PNP BJTs
-* Vref = VBE_Q3 + (Rout/Rptat) * VT * ln(N)
 
 .lib "sky130_models/sky130.lib.spice" tt
 
@@ -13,31 +12,24 @@ Vss vss 0 0
 * Branch 1: single PNP (1x)
 XQ1 vss n1 n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
 
-* Branch 2: 8 parallel PNPs (8x) — emitter area ratio sets PTAT slope
+* Branch 2: N parallel PNPs (Nx) — emitter area ratio sets PTAT slope
 XQ2 vss n2 n2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
 
 * PTAT resistor between emitters
-Rptat n1 n2 {Rptat}
+Rptat n1 n2 7071.067811865475
 
 * === Current mirror forces equal currents through both branches ===
-XMp1 n1 n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
-XMp2 n2 n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
-XMp3 vref n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp1 n1 n1 vdd vdd sky130_fd_pr__pfet_01v8 W=19.999999999999996u L=2.23606797749979u nf=1
+XMp2 n2 n1 vdd vdd sky130_fd_pr__pfet_01v8 W=19.999999999999996u L=2.23606797749979u nf=1
+XMp3 vref n1 vdd vdd sky130_fd_pr__pfet_01v8 W=19.999999999999996u L=2.23606797749979u nf=1
 
-* === Output: VBE (CTAT) + I_ptat * Rout (PTAT) = bandgap voltage ===
-* Q3 diode-connected PNP provides CTAT VBE
-XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+* === Output: sum PTAT and CTAT currents through Rout ===
+Rout vref vss 50000.00000000001
 
-* Rout converts PTAT current to voltage on top of VBE
-Rout vref nq3 {Rout}
-
-* === Startup circuit: ensures circuit exits zero-current state ===
-* At power-up, vref=0 → Ms2 OFF → nstart pulled to VDD via Rstart
-* → Ms1 ON → pulls n1 low → mirror turns on → circuit starts
-* Once vref rises → Ms2 ON → nstart pulled low → Ms1 OFF → startup disengaged
-Rstart nstart vdd {Rstart}
-XMs1 n1 nstart vss vss sky130_fd_pr__nfet_01v8 W={Wstart}u L=1u nf=1
-XMs2 nstart vref vss vss sky130_fd_pr__nfet_01v8 W=1u L=1u nf=1
+* === Startup circuit: ensure circuit exits zero-current state ===
+XMs1 nstart nstart vdd vdd sky130_fd_pr__pfet_01v8 W=3.162277660168379u L=1u nf=1
+XMs2 nstart n1 vss vss sky130_fd_pr__nfet_01v8 W=3.162277660168379u L=1u nf=1
+Cstart nstart vss 1p
 
 * === Measurements ===
 .control
