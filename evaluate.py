@@ -119,7 +119,7 @@ def run_simulation(template: str, param_values: Dict[str, float],
     try:
         result = subprocess.run(
             [NGSPICE, "-b", path],
-            capture_output=True, text=True, timeout=120,
+            capture_output=True, text=True, timeout=30,
             cwd=PROJECT_DIR
         )
         output = result.stdout + result.stderr
@@ -317,7 +317,7 @@ def run_de(template: str, params: List[Dict], specs: Dict,
     max_iter = 5000 if not quick else 50
 
     if not n_workers:
-        n_workers = os.cpu_count() or 8
+        n_workers = min(os.cpu_count() or 8, 16)
 
     if server_url:
         def eval_func(parameters, **kwargs):

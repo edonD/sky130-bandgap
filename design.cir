@@ -2,9 +2,13 @@
 * OTA-based bandgap with PMOS diff pair
 * OTA forces V(n1) = V(n2) via negative feedback
 * IPTAT = VT * ln(N) / Rptat, where N=8 (BJT area ratio)
-* Vref = VBE_Q3 + IPTAT * Rout
+* Vref = VBE_Q3 + IPTAT * Rout, where Rout = Rptat * Rratio
 
 .lib "sky130_models/sky130.lib.spice" tt
+
+* Derived parameter: output resistor = PTAT resistor * ratio
+.param rptat_val = {Rptat}
+.param rratio_val = {Rratio}
 
 * Supply
 Vdd vdd 0 dc 1.8 ac 1
@@ -24,8 +28,8 @@ XMp2 n2 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
 XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
 
 * === OTA: PMOS diff pair + NMOS active load ===
-* For negative feedback: n2 is V+ (non-inverting), n1 is V- (inverting)
-* When current increases: Rptat drop raises n2 voltage more than n1
+* n2 = V+ (non-inverting), n1 = V- (inverting) for negative feedback
+* When mirror current increases -> Rptat drop makes V(n2) rise more than V(n1)
 * OTA output ng rises -> PMOS mirrors reduce current -> negative feedback
 XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
 XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
@@ -39,10 +43,10 @@ XMl2 ng na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
 
 * === Output: VBE (CTAT) + IPTAT * Rout (PTAT) ===
 XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
-Rout vref nq3 {Rout}
+Rout vref nq3 'rptat_val * rratio_val'
 
-* === Startup: weak resistor pulls ng low to start PMOS mirror ===
-Rstart ng vss 50000000
+* === Startup: PMOS injects current when vref is low ===
+XMs n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=4u nf=1
 
 * Compensation cap for OTA stability
 Cc ng vss {Cc}p

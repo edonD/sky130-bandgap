@@ -1,0 +1,19 @@
+* Test ratio approach
+.lib "sky130_models/sky130.lib.spice" tt
+.param rptat_val = 50000
+.param rratio_val = 10
+Vdd vdd 0 dc 1.8
+Vss vss 0 0
+XQ1 vss vss n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+Rptat n1 vss 50000
+XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+Rout nq3 vss 'rptat_val * rratio_val'
+.control
+op
+let vn1 = v(n1)
+let vnq3 = v(nq3)
+echo "V_N1" $&vn1
+echo "V_NQ3" $&vnq3
+echo "DONE"
+.endc
+.end
