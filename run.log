@@ -3,14 +3,7 @@ Design: SKY130 Bandgap Voltage Reference
 Parameters: 6
 Specs: 5
 
-DE: 6 params, pop=30, patience=10, workers=32
-[DE] iter    1 | best: 3.517997e+02 | no_improve:   0 | div: 0.2890 | dt: 86.014s
-[DE] iter    2 | best: 3.517997e+02 | no_improve:   1 | div: 0.2586 | dt: 63.497s
-[DE] iter    3 | best: 3.517997e+02 | no_improve:   2 | div: 0.2490 | dt: 76.487s
-[DE] iter    4 | best: 3.517997e+02 | no_improve:   3 | div: 0.2318 | dt: 73.785s
-[DE] iter    5 | best: 3.517997e+02 | no_improve:   4 | div: 0.2200 | dt: 85.903s
-[DE] iter    6 | best: 3.517997e+02 | no_improve:   5 | div: 0.2119 | dt: 93.448s
-[DE] iter    7 | best: 3.517997e+02 | no_improve:   6 | div: 0.1974 | dt: 92.350s
-[DE] iter    8 | best: 3.517997e+02 | no_improve:   7 | div: 0.1901 | dt: 99.889s
-[DE] iter    9 | best: 3.517997e+02 | no_improve:   8 | div: 0.1868 | dt: 97.665s
-[DE] iter   10 | best: 3.517997e+02 | no_improve:   9 | div: 0.1775 | dt: 105.635s
+DE: 6 params, pop=100, patience=50, workers=32
+[DE] iter    1 | best: 2.009891e+04 | no_improve:   0 | div: 0.2887 | dt: 300.393s
+[DE] iter    2 | best: 1.326683e+04 | no_improve:   0 | div: 0.2764 | dt: 316.674s
+[DE] iter    3 | best: 1.208395e+04 | no_improve:   0 | div: 0.2644 | dt: 342.969s

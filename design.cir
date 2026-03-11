@@ -1,6 +1,6 @@
 * SKY130 Bandgap Voltage Reference
-* Classic PTAT + CTAT using parasitic PNP BJTs
-* Vref = VBE_Q3 + (Rout/Rptat) * VT * ln(N)
+* OTA-based bandgap with PMOS diff pair forcing PTAT current
+* Vref = VBE_Q3 + (Rout/Rptat) * VT * ln(8)
 
 .lib "sky130_models/sky130.lib.spice" tt
 
@@ -8,36 +8,45 @@
 Vdd vdd 0 dc 1.8 ac 1
 Vss vss 0 0
 
-* === Core: Two PNP branches with different emitter counts ===
-
-* Branch 1: single PNP (1x), diode-connected (base=collector=vss)
+* === PNP BJT Core ===
+* Branch 1: Q1 (1x PNP), emitter at n1
 XQ1 vss vss n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
 
-* Branch 2: 8 parallel PNPs (8x), diode-connected (base=collector=vss)
-XQ2 vss vss n2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
+* Branch 2: Q2 (8x PNP), Rptat in series, emitter at ne2
+XQ2 vss vss ne2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
+Rptat n2 ne2 {Rptat}
 
-* PTAT resistor between emitters
-Rptat n1 n2 {Rptat}
+* === PMOS Current Mirror (driven by OTA output ng) ===
+XMp1 n1 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp2 n2 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
 
-* === Current mirror forces equal currents through both branches ===
-XMp1 n1 n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
-XMp2 n2 n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
-XMp3 vref n1 vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+* === OTA: PMOS diff pair + NMOS active load ===
+* V+ = n2 (non-inverting, branch with Rptat — more sensitive to current)
+* V- = n1 (inverting, simple VBE branch)
+* Output ng drives the PMOS mirror gates
+XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
+XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
 
-* === Output: VBE (CTAT) + I_ptat * Rout (PTAT) = bandgap voltage ===
-* Q3 diode-connected PNP provides CTAT VBE
+* Tail current via resistor from VDD
+Rtail vdd nsc {Rtail}
+
+* NMOS active load (current mirror)
+XMl1 na na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
+XMl2 ng na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
+
+* === Output: VBE (CTAT) + IPTAT * Rout (PTAT) ===
 XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
-
-* Rout converts PTAT current to voltage on top of VBE
 Rout vref nq3 {Rout}
 
-* === Startup circuit: ensures circuit exits zero-current state ===
-* At power-up, vref=0 → Ms2 OFF → nstart pulled to VDD via Rstart
-* → Ms1 ON → pulls n1 low → mirror turns on → circuit starts
-* Once vref rises → Ms2 ON → nstart pulled low → Ms1 OFF → startup disengaged
-Rstart nstart vdd {Rstart}
-XMs1 n1 nstart vss vss sky130_fd_pr__nfet_01v8 W={Wstart}u L=1u nf=1
-XMs2 nstart vref vss vss sky130_fd_pr__nfet_01v8 W=1u L=1u nf=1
+* === Startup: PMOS injects current into n1 when vref is low ===
+XMs_start n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=4u nf=1
+
+* Compensation cap for OTA stability
+Cc ng vss 2p
+
+* Help simulator converge to desired operating point
+.nodeset v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
 
 * === Measurements ===
 .control
@@ -58,7 +67,7 @@ let tempco_val = (vref_max - vref_min) / vref_nom / 165 * 1e6
 echo "RESULT_TEMPCO_PPM" $&tempco_val
 destroy all
 
-* PSRR: AC analysis at nominal operating point (must be before DC sweeps)
+* PSRR: AC analysis
 op
 ac dec 100 1 1G
 meas ac psrr_gain find vdb(vref) at=100

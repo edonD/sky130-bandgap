@@ -1,7 +1,11 @@
 name,min,max,scale
 Wm,2,200,log
 Lm,0.5,10,log
-Rptat,1000,100000,log
-Rout,5000,500000,log
-Wstart,0.5,20,log
-Rstart,10000,1000000,log
+Wd,2,100,log
+Ld,0.5,10,log
+Wl,1,50,log
+Ll,0.5,10,log
+Rtail,50000,2000000,log
+Rptat,5000,500000,log
+Rout,10000,1000000,log
+Wstart,0.5,10,log
