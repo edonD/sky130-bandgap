@@ -1,0 +1,56 @@
+* SKY130 Bandgap - Fast evaluation for DE
+.lib "sky130_models/sky130.lib.spice" tt
+.param rptat_val = {Rptat}
+.param rratio_val = {Rratio}
+Vdd vdd 0 dc 1.8 ac 1
+Vss vss 0 0
+XQ1 vss vss n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+XQ2 vss vss ne2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
+Rptat n2 ne2 {Rptat}
+XMp1 n1 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp2 n2 ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
+XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
+XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
+Rtail vdd nsc {Rtail}
+XMl1 na na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
+XMl2 ng na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
+XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+Rout vref nq3 'rptat_val * rratio_val'
+XMs n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=4u nf=1
+Cc ng vss {Cc}p
+.ic v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
+.options gmin=1e-11 abstol=1e-11 reltol=0.01 itl1=500 srcsteps=10
+.control
+* Fast: op + coarse temp sweep + coarse VDD sweep + minimal AC
+op
+let vref_val = v(vref)
+echo "RESULT_VREF_V" $&vref_val
+let pwr = abs(v(vdd) * i(Vdd)) * 1e6
+echo "RESULT_POWER_UW" $&pwr
+destroy all
+
+dc temp -40 125 15
+let vref_max = vecmax(v(vref))
+let vref_min = vecmin(v(vref))
+let vref_nom = (vref_max + vref_min) / 2
+let tempco_val = (vref_max - vref_min) / vref_nom / 165 * 1e6
+echo "RESULT_TEMPCO_PPM" $&tempco_val
+destroy all
+
+op
+ac dec 5 10 1k
+meas ac psrr_gain find vdb(vref) at=100
+let psrr_val = -psrr_gain
+echo "RESULT_PSRR_DB" $&psrr_val
+destroy all
+
+dc Vdd 1.4 2.2 0.4
+let vref_first = v(vref)[0]
+let vref_last = v(vref)[length(v(vref))-1]
+let line_reg = abs(vref_last - vref_first) / 0.8 * 1000
+echo "RESULT_LINE_REG_MV_V" $&line_reg
+
+echo "RESULT_DONE"
+.endc
+.end

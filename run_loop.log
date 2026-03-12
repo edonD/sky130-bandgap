@@ -1,29 +1,39 @@
-=== Bandgap Autoresearch Loop Started: Wed Mar 11 19:13:03 UTC 2026 ===
 
-=== ITERATION 1 — Wed Mar 11 19:13:03 UTC 2026 ===
-=== Bandgap Autoresearch Loop Started: Wed Mar 11 21:06:23 UTC 2026 ===
+--- Sweep Rratio ---
+  Rratio=7.699999999999996: TC=43.3 LR=9.4 PSRR=45.6 Vref=1.2128 score=48.4
+  Rratio=7.799999999999995: TC=29.6 LR=9.5 PSRR=43.6 Vref=1.2134 score=35.5 <-- BEST
+  Rratio=7.999999999999995: TC=12.5 LR=9.2 PSRR=43.6 Vref=1.2248 score=17.8 <-- BEST
+  Rratio=8.099999999999994: TC=22.3 LR=9.4 PSRR=43.6 Vref=1.2306 score=28.0
+  Selected Rratio=7.999999999999995
 
-=== ITERATION 1 — Wed Mar 11 21:06:23 UTC 2026 ===
-Claude exited with code 0 at Wed Mar 11 21:52:54 UTC 2026
+--- Sweep Rptat ---
+  Rptat=30000: TC=12.5 LR=9.2 PSRR=43.6 Vref=1.2248 score=17.8
+  Selected Rptat=30000
 
-=== ITERATION 2 — Wed Mar 11 21:52:59 UTC 2026 ===
-=== Bandgap Reference Autoresearch Loop Started: Wed Mar 11 21:53:04 UTC 2026 ===
+--- Sweep Rratio ---
+  Rratio=7.699999999999994: TC=42.3 LR=9.4 PSRR=43.6 Vref=1.2077 score=48.0
+  Rratio=7.799999999999994: TC=29.6 LR=9.3 PSRR=43.6 Vref=1.2134 score=35.1
+  Rratio=7.899999999999993: TC=17.9 LR=9.2 PSRR=43.6 Vref=1.2191 score=23.1
+  Rratio=7.999999999999993: TC=10.1 LR=9.2 PSRR=43.6 Vref=1.2248 score=15.4 <-- BEST
+  Rratio=8.099999999999993: TC=22.3 LR=9.4 PSRR=43.6 Vref=1.2306 score=28.0
+  Selected Rratio=7.999999999999993
 
-=== ITERATION 1 — Wed Mar 11 21:53:04 UTC 2026 ===
-Claude exited with code 0 at Wed Mar 11 22:42:39 UTC 2026
-Claude exited with code 0 at Wed Mar 11 22:42:39 UTC 2026
+--- Sweep Rtail ---
+  Rtail=40000: TC=11.0 LR=8.6 PSRR=41.7 Vref=1.2245 score=15.6
+  Rtail=50000: TC=10.1 LR=9.2 PSRR=43.6 Vref=1.2248 score=15.4
+  Selected Rtail=50000
 
-=== ITERATION 3 — Wed Mar 11 22:42:44 UTC 2026 ===
+--- Sweep Wm ---
+  Wm=85: TC=10.1 LR=9.2 PSRR=43.6 Vref=1.2248 score=15.4
+  Selected Wm=85
 
-=== ITERATION 2 — Wed Mar 11 22:42:44 UTC 2026 ===
+--- Sweep Lm ---
+  Lm=2: TC=10.1 LR=9.2 PSRR=43.6 Vref=1.2248 score=15.4
+  Selected Lm=2
 
+--- Sweep Wd ---
+  Wd=15: TC=27.2 LR=6.8 PSRR=41.1 Vref=1.2255 score=28.5
+  Wd=20: TC=10.1 LR=9.2 PSRR=43.6 Vref=1.2248 score=15.4
+  Selected Wd=20
 
-The iteration 3 experiment loop is complete. The background DE task that failed (exit 144) was from the earlier attempt that got killed by competing processes — it's not relevant since I already completed the iteration successfully using manual parameter optimization.
-
-**Summary of iteration 3:**
-- Score: **1.00** (all 5/5 specs met)
-- Results committed and pushed as `02f37ab`
-- All plots generated (vref_vs_temp, vref_vs_vdd, psrr, startup, progress, schematic)
-Claude exited with code 0 at Thu Mar 12 00:15:52 UTC 2026
-
-=== ITERATION 4 — Thu Mar 12 00:15:57 UTC 2026 ===
+--- Sweep Ld ---

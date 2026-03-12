@@ -15,7 +15,7 @@ plt.rcParams.update({
 })
 
 PARAMS = {'Wm': 85, 'Lm': 2, 'Wd': 20, 'Ld': 4, 'Wl': 5, 'Ll': 10,
-          'Rptat': 30000, 'Rratio': 7.7, 'Rtail': 50000, 'Wstart': 2, 'Cc': 3}
+          'Rptat': 30000, 'Rratio': 8.0, 'Rtail': 50000, 'Wstart': 2, 'Cc': 3}
 
 def base_netlist():
     return f"""* SKY130 Bandgap Voltage Reference
