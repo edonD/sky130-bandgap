@@ -1,0 +1,96 @@
+* SKY130 Bandgap — Validation with best parameters
+* From commit 02f37ab, score=1.0
+.lib "sky130_models/sky130.lib.spice" tt
+
+.param rptat_val = 30000
+.param rratio_val = 7.7
+
+Vdd vdd 0 dc 1.8 ac 1
+Vss vss 0 0
+
+* PNP BJTs
+XQ1 vss vss n1 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+XQ2 vss vss ne2 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=8
+Rptat n2 ne2 30000
+
+* PMOS Current Mirror
+XMp1 n1 ng vdd vdd sky130_fd_pr__pfet_01v8 W=85u L=2u nf=1
+XMp2 n2 ng vdd vdd sky130_fd_pr__pfet_01v8 W=85u L=2u nf=1
+XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W=85u L=2u nf=1
+
+* OTA: PMOS diff pair
+XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W=20u L=4u nf=1
+XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W=20u L=4u nf=1
+Rtail vdd nsc 50000
+
+* NMOS active load
+XMl1 na na vss vss sky130_fd_pr__nfet_01v8 W=5u L=10u nf=1
+XMl2 ng na vss vss sky130_fd_pr__nfet_01v8 W=5u L=10u nf=1
+
+* Output
+XQ3 vss vss nq3 vss sky130_fd_pr__pnp_05v5_W0p68L0p68 m=1
+Rout vref nq3 'rptat_val * rratio_val'
+
+* Startup
+XMs n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W=2u L=4u nf=1
+
+* Compensation
+Cc ng vss 3p
+
+.ic v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
+.options gmin=1e-11 abstol=1e-11 reltol=0.01 itl1=500 srcsteps=10
+
+.control
+* === Validation a) Operating point check ===
+set temp=27
+op
+echo "=== OPERATING POINT ==="
+print v(vref) v(n1) v(n2) v(ne2) v(nq3) v(ng) v(nsc) v(na)
+let pwr = abs(v(vdd) * i(Vdd)) * 1e6
+echo "Power (uW):"
+print pwr
+echo "Branch currents (uA):"
+print @xmp1[id]*1e6 @xmp2[id]*1e6 @xmp3[id]*1e6
+destroy all
+
+* === Validation c) Temperature sweep (-40 to 125C, fine) ===
+dc temp -40 125 5
+echo "=== TEMPERATURE SWEEP ==="
+let vref_max = vecmax(v(vref))
+let vref_min = vecmin(v(vref))
+let vref_nom = (vref_max + vref_min) / 2
+let tempco_val = (vref_max - vref_min) / vref_nom / 165 * 1e6
+print vref_max vref_min vref_nom tempco_val
+* Print Vref at key temperatures
+print v(vref)[0] v(vref)[8] v(vref)[13] v(vref)[25] v(vref)[33]
+destroy all
+
+* === PSRR ===
+op
+ac dec 100 1 1G
+echo "=== PSRR ==="
+meas ac psrr_dc find vdb(vref) at=1
+meas ac psrr_100 find vdb(vref) at=100
+meas ac psrr_1k find vdb(vref) at=1000
+meas ac psrr_1M find vdb(vref) at=1e6
+destroy all
+
+* === Line regulation ===
+echo "=== LINE REGULATION ==="
+dc Vdd 1.4 2.2 0.01
+let vref_first = v(vref)[0]
+let vref_last = v(vref)[length(v(vref))-1]
+let line_reg = abs(vref_last - vref_first) / 0.8 * 1000
+print vref_first vref_last line_reg
+destroy all
+
+* === Validation d) Startup ===
+echo "=== STARTUP ==="
+tran 100n 50u uic
+meas tran vref_final find v(vref) at=49u
+meas tran vref_10u find v(vref) at=10u
+meas tran settle_time when v(vref)=1.2 rise=1
+
+echo "=== VALIDATION COMPLETE ==="
+.endc
+.end
