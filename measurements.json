@@ -1,0 +1,67 @@
+{
+  "measurements": {
+    "RESULT_VREF_V": 1.21283,
+    "RESULT_POWER_UW": 11.6096,
+    "RESULT_TEMPCO_PPM": 41.9869,
+    "RESULT_PSRR_DB": 45.635,
+    "RESULT_LINE_REG_MV_V": 9.84188
+  },
+  "score": 1.0,
+  "details": {
+    "vref_v": {
+      "measured": 1.21283,
+      "target": "1.15-1.25",
+      "met": true,
+      "score": 1.0,
+      "unit": "V"
+    },
+    "tempco_ppm": {
+      "measured": 41.9869,
+      "target": "<50",
+      "met": true,
+      "score": 1.0,
+      "unit": "ppm/C"
+    },
+    "psrr_db": {
+      "measured": 45.635,
+      "target": ">40",
+      "met": true,
+      "score": 1.0,
+      "unit": "dB"
+    },
+    "power_uw": {
+      "measured": 11.6096,
+      "target": "<100",
+      "met": true,
+      "score": 1.0,
+      "unit": "uW"
+    },
+    "line_reg_mv_v": {
+      "measured": 9.84188,
+      "target": "<10",
+      "met": true,
+      "score": 1.0,
+      "unit": "mV/V"
+    }
+  },
+  "parameters": {
+    "Wm": 85.0,
+    "Lm": 2.0,
+    "Wd": 20.0,
+    "Ld": 4.0,
+    "Wl": 5.0,
+    "Ll": 10.0,
+    "Rtail": 50000.0,
+    "Rptat": 30000.0,
+    "Rratio": 7.7,
+    "Wstart": 2.0,
+    "Cc": 3.0
+  },
+  "de_result": {
+    "converged": true,
+    "iterations": "manual",
+    "diversity": 0,
+    "stop_reason": "manual_optimization",
+    "best_metric": -1.0
+  }
+}

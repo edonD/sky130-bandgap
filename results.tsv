@@ -1,1 +1,2 @@
 step	commit	score	topology	specs_met	notes
+3	62f8d87	1.0000	OTA-bandgap-Rratio	5/5	All specs met: Vref=1.213V TC=42ppm PSRR=45.6dB LR=9.8mV/V Pwr=11.6uW
