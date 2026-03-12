@@ -1,6 +1,8 @@
 name,min,max,scale
 Wm,30,100,log
 Lm,1,4,log
+Wc,10,100,log
+Lc,0.5,4,log
 Wd,5,50,log
 Ld,2,8,log
 Wl,2,20,log
@@ -10,3 +12,4 @@ Rptat,15000,60000,log
 Rratio,6,10,log
 Wstart,0.5,5,log
 Cc,1,10,log
+Rcasbias,10000,200000,log

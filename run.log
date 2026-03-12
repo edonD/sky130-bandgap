@@ -6,3 +6,12 @@ Specs: 5
 DE: 11 params, pop=30, patience=10, workers=4
 [DE] iter    1 | best: 5.369079e+00 | no_improve:   0 | div: 0.2895 | dt: 41.987s
 [DE] iter    2 | best: -5.963971e+00 | no_improve:   0 | div: 0.2532 | dt: 42.013s
+[DE] iter    3 | best: -5.963971e+00 | no_improve:   1 | div: 0.2440 | dt: 42.102s
+[DE] iter    4 | best: -5.963971e+00 | no_improve:   2 | div: 0.2408 | dt: 42.111s
+[DE] iter    5 | best: -6.537206e+00 | no_improve:   0 | div: 0.2282 | dt: 42.092s
+[DE] iter    6 | best: -6.537206e+00 | no_improve:   1 | div: 0.2245 | dt: 42.095s
+[DE] iter    7 | best: -6.537206e+00 | no_improve:   2 | div: 0.2174 | dt: 42.112s
+[DE] iter    8 | best: -6.537206e+00 | no_improve:   3 | div: 0.1987 | dt: 42.291s
+[DE] iter    9 | best: -6.537206e+00 | no_improve:   4 | div: 0.1977 | dt: 42.256s
+[DE] iter   10 | best: -6.650487e+00 | no_improve:   0 | div: 0.1843 | dt: 42.291s
+[DE] iter   11 | best: -6.895782e+00 | no_improve:   0 | div: 0.1856 | dt: 42.052s
