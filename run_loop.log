@@ -37,3 +37,28 @@
   Selected Wd=20
 
 --- Sweep Ld ---
+  Ld=4: TC=10.1 LR=9.2 PSRR=43.6 Vref=1.2248 score=15.4
+  Selected Ld=4
+
+--- Sweep Wl ---
+  Wl=2: TC=7.5 LR=7.9 PSRR=47.9 Vref=1.2205 score=9.0 <-- BEST
+  Wl=3: TC=10.7 LR=8.1 PSRR=47.1 Vref=1.2215 score=12.7
+  Wl=5: TC=10.1 LR=9.2 PSRR=43.6 Vref=1.2248 score=15.4
+  Selected Wl=2
+
+--- Sweep Ll ---
+  Ll=6: TC=10.7 LR=9.2 PSRR=46.6 Vref=1.2225 score=15.0
+  Ll=8: TC=9.3 LR=8.2 PSRR=47.6 Vref=1.2210 score=11.4
+  Ll=10: TC=7.5 LR=7.9 PSRR=47.9 Vref=1.2205 score=9.0
+  Selected Ll=10
+
+--- Sweep Rratio ---
+  Rratio=7.649999999999992: TC=48.1 LR=8.5 PSRR=47.9 Vref=1.2006 score=50.7
+  Rratio=7.699999999999992: TC=40.1 LR=8.3 PSRR=47.9 Vref=1.2034 score=42.4
+  Rratio=7.749999999999992: TC=33.4 LR=8.3 PSRR=47.9 Vref=1.2063 score=35.6
+  Rratio=7.799999999999992: TC=25.2 LR=8.2 PSRR=47.9 Vref=1.2091 score=27.1
+  Rratio=7.849999999999992: TC=19.4 LR=8.6 PSRR=47.9 Vref=1.2119 score=22.3
+  Rratio=7.8999999999999915: TC=26.8 LR=8.1 PSRR=47.9 Vref=1.2148 score=28.6
+  Rratio=7.949999999999991: TC=7.2 LR=8.8 PSRR=47.9 Vref=1.2176 score=10.4
+  Rratio=8.04999999999999: TC=15.4 LR=7.9 PSRR=47.9 Vref=1.2233 score=16.9
+  Rratio=8.09999999999999: TC=35.2 LR=8.2 PSRR=47.9 Vref=1.2261 score=37.3

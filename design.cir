@@ -29,8 +29,10 @@ XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
 XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
 XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
 
-* Tail current source: resistor from VDD
-Rtail vdd nsc {Rtail}
+* Tail current source: PMOS current mirror (high PSRR vs resistor)
+XMtb ntbias ntbias vdd vdd sky130_fd_pr__pfet_01v8 W={Wtail}u L={Ltail}u nf=1
+Rtail ntbias vss {Rtail}
+XMtail nsc ntbias vdd vdd sky130_fd_pr__pfet_01v8 W={Wtail}u L={Ltail}u nf=1
 
 * NMOS active load (current mirror)
 XMl1 na na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
@@ -47,7 +49,7 @@ XMs n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=4u nf=1
 Cc ng vss {Cc}p
 
 * Convergence
-.ic v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
+.ic v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4 v(ntbias)=1.0
 .options gmin=1e-11 abstol=1e-11 reltol=0.01 itl1=500 srcsteps=10
 
 * === Measurements ===
