@@ -3,3 +3,4 @@ step	commit	score	topology	specs_met	notes
 4	5ddd544	0.9500	OTA-bandgap-cascode	4/5	Fine tempco=62ppm (fails <50). Vref=1.213V PSRR=45.6dB LR=9.4mV/V Pwr=11.6uW. Cascode DE running.
 1	6ba9276	1.00	OTA-PMOS-diff-pair	5/5	Manual optimization: all specs met (Vref=1.213V, TC=42.9ppm, PSRR=45.6dB, Pwr=11.6uW, LR=9.8mV/V)
 5	43aba8d	1.0000	OTA-bandgap-Rratio8	5/5	All specs met (fine 1C): Vref=1.225V TC=35.6ppm PSRR=43.6dB LR=9.2mV/V Pwr=11.5uW. Rratio optimized 7.7->8.0
+4	c15383a	1.0000	OTA-bandgap-tuned-Rtail-Rptat	5/5	Improved margins: Vref=1.226V TC=14ppm PSRR=43.3dB LR=8.6mV/V Pwr=11.9uW

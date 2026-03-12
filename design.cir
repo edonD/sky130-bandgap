@@ -29,10 +29,8 @@ XMp3 vref ng vdd vdd sky130_fd_pr__pfet_01v8 W={Wm}u L={Lm}u nf=1
 XMd1 na n2 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
 XMd2 ng n1 nsc vdd sky130_fd_pr__pfet_01v8 W={Wd}u L={Ld}u nf=1
 
-* Tail current source: PMOS current mirror (high PSRR vs resistor)
-XMtb ntbias ntbias vdd vdd sky130_fd_pr__pfet_01v8 W={Wtail}u L={Ltail}u nf=1
-Rtail ntbias vss {Rtail}
-XMtail nsc ntbias vdd vdd sky130_fd_pr__pfet_01v8 W={Wtail}u L={Ltail}u nf=1
+* Tail current source: resistor from VDD
+Rtail vdd nsc {Rtail}
 
 * NMOS active load (current mirror)
 XMl1 na na vss vss sky130_fd_pr__nfet_01v8 W={Wl}u L={Ll}u nf=1
@@ -49,8 +47,8 @@ XMs n1 vref vdd vdd sky130_fd_pr__pfet_01v8 W={Wstart}u L=4u nf=1
 Cc ng vss {Cc}p
 
 * Convergence
-.ic v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4 v(ntbias)=1.0
-.options gmin=1e-11 abstol=1e-11 reltol=0.01 itl1=500 srcsteps=10
+.ic v(n1)=0.75 v(n2)=0.75 v(vref)=1.2 v(ng)=1.0 v(nsc)=1.4
+.options gmin=1e-11 abstol=1e-11 reltol=0.003 itl1=500
 
 * === Measurements ===
 .control
@@ -62,8 +60,8 @@ let pwr = abs(v(vdd) * i(Vdd)) * 1e6
 echo "RESULT_POWER_UW" $&pwr
 destroy all
 
-* Temperature sweep — 5C steps for accurate tempco
-dc temp -40 125 5
+* Temperature sweep
+dc temp -40 125 1
 let vref_max = vecmax(v(vref))
 let vref_min = vecmin(v(vref))
 let vref_nom = (vref_max + vref_min) / 2
@@ -73,14 +71,14 @@ destroy all
 
 * PSRR: AC analysis
 op
-ac dec 20 1 1G
+ac dec 100 1 1G
 meas ac psrr_gain find vdb(vref) at=100
 let psrr_val = -psrr_gain
 echo "RESULT_PSRR_DB" $&psrr_val
 destroy all
 
 * Line regulation
-dc Vdd 1.4 2.2 0.1
+dc Vdd 1.4 2.2 0.02
 let vref_first = v(vref)[0]
 let vref_last = v(vref)[length(v(vref))-1]
 let line_reg = abs(vref_last - vref_first) / 0.8 * 1000

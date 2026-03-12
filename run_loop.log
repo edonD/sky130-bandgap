@@ -62,3 +62,17 @@
   Rratio=7.949999999999991: TC=7.2 LR=8.8 PSRR=47.9 Vref=1.2176 score=10.4
   Rratio=8.04999999999999: TC=15.4 LR=7.9 PSRR=47.9 Vref=1.2233 score=16.9
   Rratio=8.09999999999999: TC=35.2 LR=8.2 PSRR=47.9 Vref=1.2261 score=37.3
+  Rratio=8.149999999999991: TC=30.5 LR=8.0 PSRR=47.9 Vref=1.2289 score=32.0
+  Rratio=8.19999999999999: TC=38.3 LR=8.0 PSRR=47.9 Vref=1.2318 score=39.8
+  Rratio=8.24999999999999: TC=45.8 LR=8.1 PSRR=47.9 Vref=1.2346 score=47.6
+  Selected Rratio=7.999999999999993
+
+============================================================
+OPTIMIZED PARAMETERS: {'Wm': 85, 'Lm': 2, 'Wd': 20, 'Ld': 4, 'Wl': 2, 'Ll': 10, 'Rptat': 30000, 'Rratio': np.float64(7.999999999999993), 'Rtail': 50000, 'Wstart': 2, 'Cc': 3}
+Vref = 1.2205 V
+TC   = 7.5 ppm/C
+PSRR = 47.9 dB
+LR   = 7.9 mV/V
+Pwr  = 11.4 uW
+All met: True
+Saved!

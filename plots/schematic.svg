@@ -708,5 +708,5 @@ text {font-family: Sans-Serif;}
 <text fill="#cccccc"  xml:space="preserve" font-size="11.2953" transform="translate(16.665, 331.365)" >=== OTA: PMOS diff pair + NMOS active load ===</text>
 <text fill="#cccccc"  xml:space="preserve" font-size="11.2953" transform="translate(16.665, 347.656)" >=== Output: VBE (CTAT) + IPTAT * Rout (PTAT) ===</text>
 <text fill="#cccccc"  xml:space="preserve" font-size="11.2953" transform="translate(16.665, 363.947)" >=== Startup: PMOS injects current when vref is low ===</text>
-<text fill="#cccccc"  xml:space="preserve" font-size="11.2953" transform="translate(16.665, 380.238)" >=== Measurements (optimized for speed) ===</text>
+<text fill="#cccccc"  xml:space="preserve" font-size="11.2953" transform="translate(16.665, 380.238)" >=== Measurements ===</text>
 </svg>

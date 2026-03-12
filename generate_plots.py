@@ -14,7 +14,7 @@ plt.rcParams.update({
     'grid.color': '#333', 'grid.alpha': 0.5, 'lines.linewidth': 2, 'font.size': 11,
 })
 
-PARAMS = {'Wm': 85, 'Lm': 2, 'Wd': 20, 'Ld': 4, 'Wl': 5, 'Ll': 10,
+PARAMS = {'Wm': 85, 'Lm': 2, 'Wd': 20, 'Ld': 4, 'Wl': 2, 'Ll': 10,
           'Rptat': 30000, 'Rratio': 8.0, 'Rtail': 50000, 'Wstart': 2, 'Cc': 3}
 
 def base_netlist():
@@ -102,7 +102,7 @@ plt.savefig('plots/vref_vs_vdd.png', dpi=150); plt.close()
 print("3. psrr.png...")
 net = base_netlist() + """.control
 op
-ac dec 50 1 1G
+ac dec 20 1 1G
 wrdata /tmp/plot_psrr.csv vdb(vref)
 .endc
 .end

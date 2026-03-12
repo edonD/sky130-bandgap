@@ -10,7 +10,7 @@ T {=== PMOS Current Mirror (driven by OTA output ng) ===} 50 -630 0 0 0.4 0.4 {}
 T {=== OTA: PMOS diff pair + NMOS active load ===} 50 -600 0 0 0.4 0.4 {}
 T {=== Output: VBE (CTAT) + IPTAT * Rout (PTAT) ===} 50 -570 0 0 0.4 0.4 {}
 T {=== Startup: PMOS injects current when vref is low ===} 50 -540 0 0 0.4 0.4 {}
-T {=== Measurements (optimized for speed) ===} 50 -510 0 0 0.4 0.4 {}
+T {=== Measurements ===} 50 -510 0 0 0.4 0.4 {}
 C {devices/vsource.sym} 80 -220 0 0 {name=Vdd
 value=1.8}
 C {devices/vsource.sym} 120 -20 0 0 {name=Vss
